@@ -1,0 +1,16 @@
+\documentclass{book}
+\usepackage{adjmulticol,lipsum}
+\setcounter{tracingmulticols}{4}
+\evensidemargin=1.5in
+\oddsidemargin=-3em
+\textwidth=5in
+\begin{document}
+\lipsum[1-2]
+ \begin{adjmulticols}{1}{12pt}{-1in}
+  \lipsum[3-4]
+\end{adjmulticols}
+\lipsum[12-14]
+ \begin{adjmulticols}{2}{12pt}{-1in}
+  \lipsum[6-8]
+\end{adjmulticols}
+\end{document}
