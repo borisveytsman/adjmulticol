@@ -44,13 +44,18 @@ clean:
 	*.cfg *.glo *.idx *.toc \
 	*.ilg *.ind *.out *.lof \
 	*.lot *.bbl *.blg *.gls \
-	*.dvi *.ps
+	*.dvi *.ps *.tgz *.zip
 
 veryclean: clean
 	$(RM) *.pdf
+
+distclean: veryclean
 
 #
 # Archive for the distribution. Includes typeset documentation
 #
 archive:  all clean
 	tar -czvf $(PACKAGE).tgz --exclude '*~' --exclude '*.tgz' --exclude CVS .
+
+zip:  all clean
+	zip -r  $(PACKAGE).zip * -x '*~' -x '*.tgz' -x '*.zip' -x CVS -x 'CVS/*'
