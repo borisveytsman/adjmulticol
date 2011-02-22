@@ -57,5 +57,7 @@ distclean: veryclean
 archive:  all clean
 	tar -czvf $(PACKAGE).tgz --exclude '*~' --exclude '*.tgz' --exclude CVS .
 
-zip:  all clean $(PACKAGE).sty
+zip:  all clean
+	${MAKE} $(PACKAGE).sty
+	$(RM) *.log
 	zip -r  $(PACKAGE).zip * -x '*~' -x '*.tgz' -x '*.zip' -x "*.ins" -x CVS -x 'CVS/*'
