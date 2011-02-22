@@ -176,7 +176,7 @@
 %</gobble>
 %<style>\ProvidesPackage{adjmulticol}
 %<*style>
-[2011/02/05 v0.1 Adjusted margins for multicolumn layout]
+[2011/02/22 v1.0 Adjusted margins for multicolumn layout]
 %    \end{macrocode}
 %
 %
@@ -214,10 +214,18 @@
 %   right for two-sided typesetting
 %    \begin{macrocode}
 \newdimen\adjmc@outer
+%    \end{macrocode}   
+% \end{macro}
+%
+%
+% \begin{macro}{\adjmc@saved@leftmargin}
+%   We save the value of |\multicol@leftmargin| between the calls in
+%   the register |\adjmc@savedleftmargin|:
+%    \begin{macrocode}
+\newdimen\adjmc@saved@leftmargin
 %    \end{macrocode}
 %   
 % \end{macro}
-%
 %
 %\subsection{Starting Environment}
 %\label{sec:start}
@@ -279,89 +287,19 @@
 %    \begin{macrocode}
 \def\adjmult@@cols#1[#2]{%
 %    \end{macrocode}
-%   We check whether this is unbounded environment---see
-%   \textsf{multicol} documentation.  Note that it is probably never
-%   excersized: who would want to call |adjmulticols| in the boxed
-%   mode?  Nevertheless let us try this just in case.
-%    \begin{macrocode}
-  \par
-  \ifinner \@boxedmulticolstrue
-  \else
-    \ifnum \doublecol@number>\z@
-       \@boxedmulticolstrue
-    \fi
-  \fi
-%    \end{macrocode}
-%   Now we check whether to start new page:
-%    \begin{macrocode}
-   \enough@room{#2}
-%    \end{macrocode}
-%   
-%   At this point we output the optional argument.  Note that the
-%   original \textsf{multicol} wanted to output it in the outer mode
-%   (i.e. not within a group).  We cannot do this because we want to
-%   put it in a list anyway.
-%    \begin{macrocode}
-   \def\@tempa{#1}%
-   \ifx\@tempa\@empty\else
-    \begin{list}{}{\topsep\z@\partopsep\z@\itemsep\z@\parsep\parskip%
-       \listparindent\parindent\itemindent\parindent
-       \if@twoside
-          \ifodd\c@page
-            \leftmargin\adjmc@inner
-            \rightmargin\adjmc@outer
-          \else
-            \leftmargin\adjmc@outer
-            \rightmargin\adjmc@inner
-          \fi
-       \else % one side printing
-         \leftmargin\adjmc@inner
-         \rightmargin\adjmc@outer
-      \fi}\item#1\end{list}\fi
-  \par\addvspace\multicolsep
-%    \end{macrocode}
-%   Then we apply the corrective space---see \textsf{multicols}
-%   documentation
-%    \begin{macrocode}
-   \ifdim \prevdepth = -\@m\p@  
-   \else
-     \@tempcnta\prevdepth
-     \@tempcntb\baselineskip
-     \divide\@tempcnta\@tempcntb
-     \advance\@tempcnta\@ne
-     \dimen@\prevdepth
-     \advance\dimen@ -\@tempcnta\baselineskip
-     \advance\dimen@ \topskip
-     \kern-\dimen@
-   \fi
-%    \end{macrocode}
-%   
-%  Then we start a new group
-%    \begin{macrocode}
-   \begingroup
-%    \end{macrocode}
-%
 %  The macro |\prepare@multicols| uses the current value of
 %  |\linewidth|.  We do not change his, but rather change |\linewidth|:
 %    \begin{macrocode}
     \advance\linewidth by -\adjmc@inner\relax
     \advance\linewidth by -\adjmc@outer\relax
 %    \end{macrocode}
-%  
 % Then we redefine the output routines:
 %    \begin{macrocode}
 \let\page@sofar=\adjmc@page@sofar
 %    \end{macrocode}
-% 
-%
-%
-%  And switch to the standard stanzas:
+% and start the standard multicols:
 %    \begin{macrocode}
-   \prepare@multicols
-     \if@boxedmulticols
-       \setbox\mult@box\vbox\bgroup
-     \fi
-     \ignorespaces}
+   \mult@@cols#1[#2]}
 %    \end{macrocode}
 % \end{macro}
 % 
@@ -373,46 +311,13 @@
 %\label{sec:end}
 %
 % \begin{macro}{\endadjmulticols}
-%   Again, this macro is described in the \textsf{multicols} documentation
+%   Here we use the standard environment end.  Note that it uses
+%   |\@checkend|, so we need to redefine |\@currenvir| to fool the
+%   check. 
 %    \begin{macrocode}
 \def\endadjmulticols{%
-  \if@boxedmulticols
-    \egroup
-    \balance@columns
-    \return@nonemptymark{first}%
-                 \kept@firstmark
-    \return@nonemptymark{bot}%
-                  \kept@botmark
-    \page@sofar
-    \global\let\kept@firstmark
-               \l@kept@firstmark
-    \global\let\kept@botmark
-            \l@kept@botmark
-  \else
-    \ifdim\pagegoal=\maxdimen
-      \ifvoid\colbreak@box\else
-        \unvbox\colbreak@box\fi
-    \fi
-   \penalty\z@
-   \prevdepth\z@
-   \output{\balance@columns@out}\eject
-    \ifvbox\partial@page
-         \unvbox\partial@page\fi
-     \global\let\kept@firstmark\@empty
-     \global\let\kept@botmark\@empty
-  \fi
-  \@checkend{adjmulticols}%
-  \endgroup
-  \global\c@unbalance\z@
-  \if@boxedmulticols\else
-    \reinsert@footnotes
-    \ifdim \pagegoal=\maxdimen
-      \global\vsize\@colroom
-    \else
-      \enough@room\postmulticols
-    \fi
-  \fi
-  \addvspace\multicolsep}
+  \def\@currenvir{multicols}%
+  \endmulticols}
 %    \end{macrocode}   
 % \end{macro}
 %
@@ -421,9 +326,19 @@
 %\subsection{Output Routines}
 %\label{sec:output}
 %
+% \begin{macro}{\adjmc@page@sofar@orig}
+%   We redefine |\page@sofar|, so we need to save the original
+%   declaration:
+%    \begin{macrocode}
+\let\adjmc@page@sofar@orig=\page@sofar
+%    \end{macrocode}
+%   
+% \end{macro}
+%
+%
 % \begin{macro}{\adjmc@page@sofar}
 %   We redefine |\page@sofar| to change the margins and allow for
-%  one-column output\dots
+%  one-column output:
 %    \begin{macrocode}
 \def\adjmc@page@sofar{%
 %    \end{macrocode}
@@ -434,63 +349,54 @@
   \ifnum\col@number=\@ne
   \setbox\mult@rightbox\box\mult@firstbox
   \fi
-   \process@cols\mult@rightbox
-       {\ifvoid\count@
-          \setbox\count@\hbox to\hsize{}%
-        \else
-          \wd\count@\hsize
-        \fi}%
-   \count@\col@number \advance\count@\m@ne
-   \mult@info\z@
-    {Column spec: \the\full@width\space = indent
-                  + columns + sep =\MessageBreak
-        \the\multicol@leftmargin\space
-        + \the\col@number\space
-        x \the\hsize\space
-        + \the\count@\space
-        x \the\columnsep
-     }%
-\ifvmode\else\errmessage{Multicol Error}\fi
-   \nointerlineskip
-   \setbox\z@\hbox{p}\global\dimen\tw@\dp\z@
 %    \end{macrocode}
-%  Here is another change with respect to the standard code: we
-%  move the thing using the shifts\dots
+% We redefine |\multicol@leftmargin| to introduce the shift of the
+% box.  We save the old code in |\adjmc@saved@leftmargin|
 %    \begin{macrocode}
-   \@tempdima=\multicol@leftmargin
+   \adjmc@saved@leftmargin=\multicol@leftmargin
    \if@twoside
       \ifodd\c@page
-        \advance\@tempdima by \adjmc@inner\relax
+        \advance\multicol@leftmargin by \adjmc@inner\relax
      \else
-        \advance \@tempdima by \adjmc@outer\relax
+        \advance \multicol@leftmargin by \adjmc@outer\relax
     \fi
    \else
-      \advance \@tempdima by \adjmc@inner\relax
+      \advance \multicol@leftmargin by \adjmc@inner\relax
   \fi
-   \moveright\@tempdima
-    \hbox to\full@width{%
-     \process@cols\mult@gfirstbox{%
-       \ifdim\dp\count@>\dimen\tw@
-         \global\dimen\tw@\dp\count@ \fi
-       \box\count@
-       \hss{\normalcolor\vrule
-              \@width\columnseprule}\hss}%
-     \ifdim\dp\mult@rightbox>\dimen\tw@
-       \global\dimen\tw@\dp\mult@rightbox \fi
-     \box\mult@rightbox
-     \rlap{\phantom p}%
-    }%
- \kern-\dimen\tw@
- \ifdim\dimen\tw@ = \mc@gridwarn
-   \PackageWarning{multicol}%
-     {Very deep columns!\MessageBreak
-      Grid alignment might be broken}%
- \fi
-}
+%    \end{macrocode}
+% Then we invoke the original |\page@sofar| and restore the margin:
+%    \begin{macrocode}
+   \adjmc@page@sofar@orig
+   \multicol@leftmargin=\adjmc@saved@leftmargin}
 %    \end{macrocode}
 %   
 % \end{macro}
 % 
+%
+%\subsection{Not Balancing Columns}
+%\label{sec:not_balance}
+%
+% The starred versions do not balance the columns.
+%
+% \begin{macro}{\adjmulticols*}
+%   This follows the code of the \textsf{multicols} package:
+%    \begin{macrocode}
+\newenvironment{adjmulticols*}{%
+   \ifinner
+     \PackageWarning{multicol}%
+       {multicols* inside a box does
+        not make sense.\MessageBreak
+        Going to balance anyway}%
+   \else
+     \let\balance@columns@out
+         \multi@column@out
+   \fi
+   \adjmulticols}{%
+   \vfill
+  \endadjmulticols}
+%    \end{macrocode}
+%   
+% \end{macro}
 %
 %
 %\subsection{Ending the Style}
