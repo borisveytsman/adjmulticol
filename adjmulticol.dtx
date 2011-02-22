@@ -422,9 +422,18 @@
 %\label{sec:output}
 %
 % \begin{macro}{\adjmc@page@sofar}
-%   We redefine |\page@sofar| to change the margins\dots
+%   We redefine |\page@sofar| to change the margins and allow for
+%  one-column output\dots
 %    \begin{macrocode}
 \def\adjmc@page@sofar{%
+%    \end{macrocode}
+%  If we have one column, the standard mechanisms leave empty space
+%  instead of the first column.  Ok, we use the fact that there is a
+%  copy of the first column in |\mult@firstbox|\dots
+%    \begin{macrocode}
+  \ifnum\col@number=\@ne
+  \setbox\mult@rightbox\box\mult@firstbox
+  \fi
    \process@cols\mult@rightbox
        {\ifvoid\count@
           \setbox\count@\hbox to\hsize{}%
@@ -445,7 +454,7 @@
    \nointerlineskip
    \setbox\z@\hbox{p}\global\dimen\tw@\dp\z@
 %    \end{macrocode}
-%  Here is the change with respect to the standard code: we
+%  Here is another change with respect to the standard code: we
 %  move the thing using the shifts\dots
 %    \begin{macrocode}
    \@tempdima=\multicol@leftmargin
