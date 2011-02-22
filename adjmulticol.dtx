@@ -126,18 +126,19 @@
 % \MakeShortVerb{|}
 % \GetFileInfo{adjmulticol.sty}
 % 
-% \title{Adjusting the margins for Multicolumn
-% Output\thanks{\copyright Boris Veytsman, 2011}} 
+% \title{Adjusting the Margins for Multicolumn
+% Output\thanks{\copyright Boris Veytsman, 2011} \thanks{Note: This
+% package is released under terms which affect its use in commercial
+% applications. Please see the details at the top of the source file}} 
 % \author{Boris Veytsman}
 % \date{\filedate, \fileversion}
 % \maketitle
 %
 % \begin{abstract}
-%  This package provides the environment |adjmulticols|, which is
-%  based on the  |multicols| environment from the \textsf{multicol}
-%  package~\cite{Mittelbach06:Multicol}, but with the option to
-%  change the margins.  The package understands the difference between
-%  the even and odd margins for two side printing.  
+%   This package provides an extension of the \textsf{multicol}
+%   package~\cite{Mittelbach06:Multicol} with the option to change the
+%   margins of the multicolumn layout.  The package understands the
+%   difference between the even and odd margins for two side printing.
 % \end{abstract}
 %
 % \tableofcontents
@@ -148,9 +149,120 @@
 %\label{sec:intro}
 %
 %
+% One of the common requests from the book designers is the
+% possibility to change the margins of the text in the midddle of the
+% page.  The standard \LaTeX{} |list| environment does exactly this.
+% Thus it is not surprising that many packages creatively use this
+% tool to change the layout.  An example is the \textsf{changepage}
+% package~\cite{Wilson09:Changepage}. Unfortunately this approach has
+% a seriour drawback:  a list sets the margins globally.  If the
+% material is split between the pages, the margins on the first page
+% are repeated on all the subsequent pages.  While this is fine for
+% one-side printing, it leads to a catastrophe for the two-sided
+% one, as can be seen from the following example (provided by Ivo
+% Welch):
+% \begin{verbatim}
+% \documentclass{book}
+% \usepackage{lipsum,multicol}
+% \evensidemargin=1.5in
+% \oddsidemargin=-3em
+% \textwidth=5in
+%
+% \newenvironment{chmargin}[2]{%
+%   \begin{list}{}{\topsep0pt\partopsep0pt\itemsep0pt\parsep\parskip%
+%       \listparindent\parindent\itemindent\parindent
+%       \leftmargin#1\rightmargin#2\relax}\item}%
+%   {\end{list}}
+%
+% \begin{document}
+%
+% \chapter{Show}
+% \section{Normal}
+% \marginpar{I need a lot of outer margin space in the normal text.}
+% \lipsum[1-10]
+% \begin{chmargin}{0pt}{-160pt}
+%   \section{End of Chapter Meterial}
+%   \textbf{Now I want to use the outer margin because I need width.}
+%   \lipsum[11-16]
+%   \fbox{\textbf{\Large Darn---it extends into the inner spine margin now.}}
+%   \lipsum[17-40]
+% \end{chmargin}
+%
+% \end{document}
+% \end{verbatim}
+% 
+%
+%  To remedy this problem, we need a completely different approach: we
+%  need to change the output routine.  This is done in this package.
+%
+%  Since the text with the special layout is often typeset in the
+%  multicolumn mode, we load the \textsf{multicol}
+%  package~\cite{Mittelbach06:Multicol} and patch it to provide two
+%  changes:
+%  \begin{enumerate}
+%  \item Margins changes, persistent over the pages.
+%  \item The possibility of an one-column ``multicolumn'' layout.  Of
+%    course, this layout does not make sense in the context of the
+%    original \textsf{multicol} package, but is useful when the
+%    margins are changed.
+%  \end{enumerate}
+%  
+%  Note that since this package uses the \textsf{multicol} package, it
+%  inherits its special moral obligation for the commercial users.
+%  Please see the source file for the details.
+%
+%  This file was commissioned for by Prof.~Ivo Welch,
+%  \url{http://www.ivo-welch.info/}. 
+%
 %\section{User Interface}
 %\label{sec:interface}
 %
+% To use this package, add to the preamble of your document the line
+% \begin{verbatim}
+% \usepackage{adjmulticol}
+% \end{verbatim}
+% 
+% The package provides two new environments for ``adjusted multicolumn
+% layout''. 
+%
+% \DescribeEnv{adjmulticols}
+% The environment |adjmulticols| is similar to the environment
+% |multicols|, but it has three mandatory arguments instead of one:
+% \begin{quote}
+%   |\begin{adjmulticols}|\marg{number}\marg{inner margin}\marg{outer
+%   margin}\\
+% \meta{text}\\
+% |\end{adjmulticols}|
+% \end{quote}
+% For example,
+% \begin{verbatim}
+%  \begin{adjmulticols}{2}{12pt}{-1in}
+%     Text Text Text
+% \end{adjmulticols}
+% \end{verbatim}
+% Here \meta{number} is the number of columns.  Unlike |multicols|,
+% |adjmulticols| environment allows this number to be 1.  
+%
+% The \meta{inner margin} and \meta{outer margin} are calculated from
+% the current text area margins, so negative values mean the extension
+% of the text area.  In one-sided printing \meta{inner margin} is the
+% left margin, and \meta{outer margin} is the right margin.  You
+% probably would not want to use this package for one-sided printing,
+% since in this case \textsf{changepage}
+% package~\cite{Wilson09:Changepage} works fine.  In two-sided
+% printing \meta{inner margin} is the margin on the spine side of the
+% page, and \meta{outer margin} is the margin on the other side.
+%
+% You can use the optional arguments of the |multicols| environment.
+% Note that the argument of the first optional argument, the header text
+% spread over all columns, is typeset with the \emph{normal} margins.
+% If you want to change margins for the header too, you may want to
+% use one-column |adjmulticols| environment instead.
+%
+% \DescribeEnv{adjmulticols*}
+% The starred version of the environment, |adjmulticols*| is similar
+% to the |multicols*| environment: it does not balance the columns on
+% the last page.
 %
 %
 %\StopEventually{%
