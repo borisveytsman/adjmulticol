@@ -292,15 +292,6 @@
     \fi
   \fi
 %    \end{macrocode}
-%   Some debugging info
-%    \begin{macrocode}
-  \mult@info\z@
-      {Starting environment with
-       \the\col@number\space columns%
-        \if@boxedmulticols\MessageBreak
-           (boxed mode)\fi
-      }%
-%    \end{macrocode}
 %   Now we check whether to start new page:
 %    \begin{macrocode}
    \enough@room{#2}
@@ -359,6 +350,7 @@
 %  
 % Then we redefine the output routines:
 %    \begin{macrocode}
+\let\page@sofar=\adjmc@page@sofar
 %    \end{macrocode}
 % 
 %
@@ -396,16 +388,9 @@
                \l@kept@firstmark
     \global\let\kept@botmark
             \l@kept@botmark
-    \mult@info\tw@
-      {Restore kept marks to\MessageBreak
-       first: \meaning\kept@firstmark
-       \MessageBreak bot\space\space:
-                     \meaning\kept@botmark }%
   \else
     \ifdim\pagegoal=\maxdimen
       \ifvoid\colbreak@box\else
-        \mult@info\@ne{Re-adding forced
-                 break(s) for splitting}%
         \unvbox\colbreak@box\fi
     \fi
    \penalty\z@
@@ -415,7 +400,6 @@
          \unvbox\partial@page\fi
      \global\let\kept@firstmark\@empty
      \global\let\kept@botmark\@empty
-     \mult@info\tw@
   \fi
   \@checkend{adjmulticols}%
   \endgroup
@@ -428,19 +412,76 @@
       \enough@room\postmulticols
     \fi
   \fi
-  \addvspace\multicolsep
-  \mult@info\z@
-     {Ending environment
-             \if@boxedmulticols
-                \space(boxed mode)\fi
-              }}
+  \addvspace\multicolsep}
 %    \end{macrocode}   
 % \end{macro}
 %
 %
 %
-%\subsection{Balancing Routines}
+%\subsection{Output Routines}
 %\label{sec:output}
+%
+% \begin{macro}{\adjmc@page@sofar}
+%   We redefine |\page@sofar| to change the margins\dots
+%    \begin{macrocode}
+\def\adjmc@page@sofar{%
+   \process@cols\mult@rightbox
+       {\ifvoid\count@
+          \setbox\count@\hbox to\hsize{}%
+        \else
+          \wd\count@\hsize
+        \fi}%
+   \count@\col@number \advance\count@\m@ne
+   \mult@info\z@
+    {Column spec: \the\full@width\space = indent
+                  + columns + sep =\MessageBreak
+        \the\multicol@leftmargin\space
+        + \the\col@number\space
+        x \the\hsize\space
+        + \the\count@\space
+        x \the\columnsep
+     }%
+\ifvmode\else\errmessage{Multicol Error}\fi
+   \nointerlineskip
+   \setbox\z@\hbox{p}\global\dimen\tw@\dp\z@
+%    \end{macrocode}
+%  Here is the change with respect to the standard code: we
+%  move the thing using the shifts\dots
+%    \begin{macrocode}
+   \@tempdima=\multicol@leftmargin
+   \if@twoside
+      \ifodd\c@page
+        \advance\@tempdima by \adjmc@inner\relax
+     \else
+        \advance \@tempdima by \adjmc@outer\relax
+    \fi
+   \else
+      \advance \@tempdima by \adjmc@inner\relax
+  \fi
+   \moveright\@tempdima
+    \hbox to\full@width{%
+     \process@cols\mult@gfirstbox{%
+       \ifdim\dp\count@>\dimen\tw@
+         \global\dimen\tw@\dp\count@ \fi
+       \box\count@
+       \hss{\normalcolor\vrule
+              \@width\columnseprule}\hss}%
+     \ifdim\dp\mult@rightbox>\dimen\tw@
+       \global\dimen\tw@\dp\mult@rightbox \fi
+     \box\mult@rightbox
+     \rlap{\phantom p}%
+    }%
+ \kern-\dimen\tw@
+ \ifdim\dimen\tw@ = \mc@gridwarn
+   \PackageWarning{multicol}%
+     {Very deep columns!\MessageBreak
+      Grid alignment might be broken}%
+ \fi
+}
+%    \end{macrocode}
+%   
+% \end{macro}
+% 
 %
 %
 %\subsection{Ending the Style}

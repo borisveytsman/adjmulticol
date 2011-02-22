@@ -40,14 +40,14 @@ all:  $(PACKAGE).pdf ${SAMPLES:%.tex=%.pdf}
 
 
 clean:
-	$(RM)  $(PACKAGE).sty $(PACKAGE).log $(PACKAGE).aux \
-	$(PACKAGE).cfg $(PACKAGE).glo $(PACKAGE).idx $(PACKAGE).toc \
-	$(PACKAGE).ilg $(PACKAGE).ind $(PACKAGE).out $(PACKAGE).lof \
-	$(PACKAGE).lot $(PACKAGE).bbl $(PACKAGE).blg $(PACKAGE).gls \
-	$(PACKAGE).dvi $(PACKAGE).ps
+	$(RM)  $(PACKAGE).sty *.log *.aux \
+	*.cfg *.glo *.idx *.toc \
+	*.ilg *.ind *.out *.lof \
+	*.lot *.bbl *.blg *.gls \
+	*.dvi *.ps
 
 veryclean: clean
-	$(RM) $(PACKAGE).pdf
+	$(RM) *.pdf
 
 #
 # Archive for the distribution. Includes typeset documentation
