@@ -217,8 +217,29 @@
 %\section{User Interface}
 %\label{sec:interface}
 %
+% The installation of the class follows the usual
+% practice~\cite{TeXFAQ} for \LaTeX{} packages:
+% \begin{enumerate}
+% \item Run \textsf{latex} on |adjmulticol.ins|.  This will produce the file
+% |adjmulticol.sty|.
+% \item Put the file |adjmulticol.sty| to
+% the place where \LaTeX{} can find them (see
+% \cite{TeXFAQ} or the documentation for your \TeX{}
+% system).\label{item:install} 
+% \item Update the database of file names.  Again, see \cite{TeXFAQ}
+% or the documentation for your \TeX{} system for the system-specific
+% details.\label{item:update}
+% \item The file |adjmulticol.pdf| provides the documentation for the
+% package (this is the file you are probably reading now).
+% \end{enumerate}
+% As an alternative to items~\ref{item:install} and~\ref{item:update}
+% you can just put the files in the working directory where your
+% |.tex| file is.
+% 
+% 
+%
 % To use this package, add to the preamble of your document
-% |\usepackage{adjmulticol}|.
+% the line |\usepackage{adjmulticol}|.
 % 
 % The package provides two new environments for adjusted multicolumn
 % layout. 
@@ -437,8 +458,7 @@
 %\label{sec:output}
 %
 % \begin{macro}{\adjmc@page@sofar@orig}
-%   We redefine |\page@sofar|, so we need to save the original
-%   declaration:
+%   First, we save the original declaration of |\page@sofar|:
 %    \begin{macrocode}
 \let\adjmc@page@sofar@orig=\page@sofar
 %    \end{macrocode}
