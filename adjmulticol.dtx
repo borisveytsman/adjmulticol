@@ -88,7 +88,7 @@
 %%
 %<*gobble> 
 % \fi
-% \CheckSum{0}
+% \CheckSum{149}
 %
 %
 %% \CharacterTable
@@ -212,7 +212,8 @@
 %  Please see the source file for the details.
 %
 %  This file was commissioned for by Prof.~Ivo Welch,
-%  \url{http://www.ivo-welch.info/}. 
+%  \url{http://www.ivo-welch.info/}.   He also provided sample files
+%  and patiently tested it.
 %
 %\section{User Interface}
 %\label{sec:interface}
@@ -284,6 +285,15 @@
 % the last page.
 %
 %
+% Since the package redefines output routines, it may behave strangely
+% if used with the packages that also redefine it or rely on the
+% |\pagegoal| and |\pagetotal| dimen registers.  The command
+% |\Needspace| from \textsf{memoir} package~\cite{Wilson:Memoir}
+% is known to lead to loss of the text in some rare cases, and
+% therefore this command is disabled inside |adjmulticols|.  Usually
+% one can get the same effect as this command by setting the
+% |\premulticols| to the desired value~\cite{Mittelbach06:Multicol}. 
+%
 %\StopEventually{\clearpage
 % \bibliography{adjmulticol}
 % \bibliographystyle{unsrt}}
@@ -307,7 +317,7 @@
 %</gobble>
 %<style>\ProvidesPackage{adjmulticol}
 %<*style>
-[2011/02/22 v1.0 Adjusted margins for multicolumn layout]
+[2011/02/23 v1.0 Adjusted margins for multicolumn layout]
 %    \end{macrocode}
 %
 %
@@ -376,13 +386,13 @@
 %   course, want to consider one column layout too:
 %    \begin{macrocode}
   \ifnum\col@number<\@ne
-     \PackageWarning{multicol}%
+     \PackageWarning{adjmulticol}%
       {Using `\number\col@number'
        columns doesn't seem a good idea.^^J
        I therefore use one columns instead}%
      \col@number\@ne\fi
   \ifnum\col@number>10
-     \PackageError{multicol}%
+     \PackageError{adjmulticol}%
       {Too many columns}%
       {Current implementation doesn't
        support more than 10 columns.%
@@ -390,6 +400,16 @@
        I therefore use 10 columns instead}%
      \col@number10 \fi
 %    \end{macrocode}
+%
+%  We alse disable |\Needspace| from \textsf{memoir}
+%  package~\cite{Wilson:Memoir}:
+%    \begin{macrocode}
+  \def\Needspace{\PackageWarning{adjmulticol}%
+    {The command \noexpand\Needspace is disabled}%
+    {The command \noexpand\Needspace is not compatible with our 
+      output routine}}
+%    \end{macrocode}
+%  
 %   As in the standard package we redefine the footnote making command:
 %    \begin{macrocode}
      \ifx\@footnotetext\mult@footnotetext\else
