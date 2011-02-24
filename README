@@ -1,8 +1,8 @@
-       Adjusting Margins for Multicolumn and One Column Output
+       Adjusting Margins for Multicolumn and Unicolumn Output
 			     Version 1.0
 
 This package provides an extension of the multicol package with the
-option to change the margins of the multicolumn layout.  The package
-understands the difference between the even and odd margins for two
-side printing. 
+option to change the margins for multicolumn and unicolumn layout.
+The package understands the difference between the even and odd
+margins for two side printing.
 
