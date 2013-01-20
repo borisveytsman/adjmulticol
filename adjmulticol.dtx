@@ -88,7 +88,7 @@
 %%
 %<*gobble> 
 % \fi
-% \CheckSum{149}
+% \CheckSum{0}
 %
 %
 %% \CharacterTable
@@ -317,7 +317,7 @@
 %</gobble>
 %<style>\ProvidesPackage{adjmulticol}
 %<*style>
-[2011/02/23 v1.0 Adjusted margins for multicolumn layout]
+[2012/01/20 v1.1 Adjusted margins for multicolumn layout]
 %    \end{macrocode}
 %
 %
@@ -456,7 +456,25 @@
 % 
 %
 % 
-%
+% \begin{macro}{\set@mult@vsize}
+% \changes{v1.1}{2013/01/20}{Redefined macro}
+%    \begin{macrocode}
+\def\set@mult@vsize#1{%
+    \vsize\@colroom
+    \@tempdima\baselineskip
+    \advance\@tempdima-\topskip
+    \advance\vsize\@tempdima
+    \vsize\col@number\vsize
+    \advance\vsize-\@tempdima
+    \ifnum\col@number>1\relax
+    \advance\vsize\col@number\baselineskip
+    \else
+    \advance\vsize-2\baselineskip
+    \fi
+    #1\advance\vsize
+        \c@collectmore\baselineskip}
+%    \end{macrocode}
+% \end{macro}
 %
 %\subsection{Ending Environment}
 %\label{sec:end}
