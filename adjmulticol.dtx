@@ -458,6 +458,8 @@
 % 
 % \begin{macro}{\set@mult@vsize}
 % \changes{v1.1}{2013/01/20}{Redefined macro}
+% The formula for |\vsize| in multicols seem to work only for
+% column number above 2.  Here we add special case of 1.
 %    \begin{macrocode}
 \def\set@mult@vsize#1{%
     \vsize\@colroom
