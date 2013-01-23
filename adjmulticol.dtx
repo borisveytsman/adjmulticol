@@ -285,14 +285,6 @@
 % the last page.
 %
 %
-% Since the package redefines output routines, it may behave strangely
-% if used with the packages that also redefine it or rely on the
-% |\pagegoal| and |\pagetotal| dimen registers.  The command
-% |\Needspace| from \textsf{memoir} package~\cite{Wilson:Memoir}
-% is known to lead to loss of the text in some rare cases, and
-% therefore this command is disabled inside |adjmulticols|.  Usually
-% one can get the same effect as this command by setting the
-% |\premulticols| to the desired value~\cite{Mittelbach06:Multicol}. 
 %
 %\StopEventually{\clearpage
 % \bibliography{adjmulticol}
@@ -401,14 +393,6 @@
      \col@number10 \fi
 %    \end{macrocode}
 %
-%  We alse disable |\Needspace| from \textsf{memoir}
-%  package~\cite{Wilson:Memoir}:
-%    \begin{macrocode}
-  \def\Needspace{\PackageWarning{adjmulticol}%
-    {The command \noexpand\Needspace is disabled}%
-    {The command \noexpand\Needspace is not compatible with our 
-      output routine}}
-%    \end{macrocode}
 %  
 %   As in the standard package we redefine the footnote making command:
 %    \begin{macrocode}
