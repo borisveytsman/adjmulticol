@@ -1,5 +1,4 @@
        Adjusting Margins for Multicolumn and Unicolumn Output
-			     Version 1.1
 
 This package provides an extension of the multicol package with the
 option to change the margins for multicolumn and unicolumn layout.
@@ -12,3 +11,4 @@ Changes:
    v1.1  Changed calculations for unicolumn layout
          which might previously lead to loss of text
 
+   v1.2  Bug fix: now adjmulticols works inside a box too.

@@ -1,7 +1,6 @@
 % \iffalse
-% $Id$
 %
-%% Copyright 2011, Boris Veytsman <borisv@lk.net>
+%% Copyright 2020, Boris Veytsman <borisv@lk.net>
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either
 %% version 1.3 of this license or (at your option) any 
@@ -88,7 +87,7 @@
 %%
 %<*gobble> 
 % \fi
-% \CheckSum{176}
+% \CheckSum{0}
 %
 %
 %% \CharacterTable
@@ -309,7 +308,7 @@
 %</gobble>
 %<style>\ProvidesPackage{adjmulticol}
 %<*style>
-[2012/01/20 v1.1 Adjusted margins for multicolumn layout]
+[2020/03/06 v1.2 Adjusted margins for multicolumn layout]
 %    \end{macrocode}
 %
 %
@@ -466,13 +465,16 @@
 %\label{sec:end}
 %
 % \begin{macro}{\endadjmulticols}
+% \changes{v1.2}{2020/03/06}{Redefined macro}
 %   Here we use the standard environment end.  Note that it uses
-%   |\@checkend|, so we need to redefine |\@currenvir| to fool the
-%   check. 
+%   |\@checkend|, so we need to redefine it to fool the
+%   check.  We need to do it globally to work inside a box too.  
 %    \begin{macrocode}
 \def\endadjmulticols{%
-  \def\@currenvir{multicols}%
-  \endmulticols}
+  \global\let\@ADJMC@checkend\@checkend
+  \gdef\@checkend##1{}%
+  \endmulticols
+  \global\let\@checkend\@ADJMC@checkend}
 %    \end{macrocode}   
 % \end{macro}
 %
