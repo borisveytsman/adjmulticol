@@ -1,6 +1,6 @@
 % \iffalse
 %
-%% Copyright 2020, Boris Veytsman <borisv@lk.net>
+%% Copyright 2022, Boris Veytsman <borisv@lk.net>
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either
 %% version 1.3 of this license or (at your option) any 
@@ -87,7 +87,7 @@
 %%
 %<*gobble> 
 % \fi
-% \CheckSum{184}
+% \CheckSum{0}
 %
 %
 %% \CharacterTable
@@ -126,7 +126,7 @@
 % \GetFileInfo{adjmulticol.sty}
 % 
 % \title{Adjusting Margins for Multicolumn and Unicolumn
-% Output\thanks{\copyright Boris Veytsman, 2020} \thanks{Note: This
+% Output\thanks{\copyright Boris Veytsman, 2022} \thanks{Note: This
 % package is released under terms which affect its use in commercial
 % applications. Please see the details at the top of the source file}} 
 % \author{Boris Veytsman}
@@ -308,7 +308,7 @@
 %</gobble>
 %<style>\ProvidesPackage{adjmulticol}
 %<*style>
-[2020/03/06 v1.2 Adjusted margins for multicolumn layout]
+[2022/03/27 v1.3 Adjusted margins for multicolumn layout]
 %    \end{macrocode}
 %
 %
@@ -363,6 +363,7 @@
 %\label{sec:start}
 %  
 % \begin{macro}{\adjmulticols}
+% \changes{v1.3}{2022/03/27}{Do not try to balance one-column version}
 %   We have three mandatory arguments instead of one for |multicols|:
 %   the number of columns, the left margin delta and the right margin
 %   delta:
@@ -390,6 +391,10 @@
        \MessageBreak
        I therefore use 10 columns instead}%
      \col@number10 \fi
+     \ifnum\col@number=\@ne\relax
+     \let\balance@columns@out
+         \multi@column@out
+     \fi
 %    \end{macrocode}
 %
 %  
@@ -466,6 +471,7 @@
 %
 % \begin{macro}{\endadjmulticols}
 % \changes{v1.2}{2020/03/06}{Redefined macro}
+% \changes{v1.3}{2022/03/27}{Added \cs{vfill} for one-column environment}
 %   Here we use the standard environment end.  Note that it uses
 %   |\@checkend|, so we need to redefine it to fool the
 %   check.  We need to do it globally to work inside a box too.  
@@ -473,6 +479,7 @@
 \def\endadjmulticols{%
   \global\let\@ADJMC@checkend\@checkend
   \gdef\@checkend##1{}%
+  \ifnum\col@number=\@ne\relax\vfill\fi
   \endmulticols
   \global\let\@checkend\@ADJMC@checkend}
 %    \end{macrocode}   

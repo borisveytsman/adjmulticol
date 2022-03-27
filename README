@@ -12,3 +12,5 @@ Changes:
          which might previously lead to loss of text
 
    v1.2  Bug fix: now adjmulticols works inside a box too.
+
+   v1.3  Big fix: disappearing material in one column output
