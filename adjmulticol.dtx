@@ -308,7 +308,7 @@
 %</gobble>
 %<style>\ProvidesPackage{adjmulticol}
 %<*style>
-[2022/03/27 v1.3 Adjusted margins for multicolumn layout]
+[2022/04/17 v1.4 Adjusted margins for multicolumn layout]
 %    \end{macrocode}
 %
 %
@@ -364,6 +364,7 @@
 %  
 % \begin{macro}{\adjmulticols}
 % \changes{v1.3}{2022/03/27}{Do not try to balance one-column version}
+% \changes{v1.4}{2022/04/17}{Change the balancing of one-column}
 %   We have three mandatory arguments instead of one for |multicols|:
 %   the number of columns, the left margin delta and the right margin
 %   delta:
@@ -392,8 +393,7 @@
        I therefore use 10 columns instead}%
      \col@number10 \fi
      \ifnum\col@number=\@ne\relax
-     \let\balance@columns@out
-         \multi@column@out
+     \let\balance@columns\adjmc@process@ne@column
      \fi
 %    \end{macrocode}
 %
@@ -500,18 +500,12 @@
 %
 %
 % \begin{macro}{\adjmc@page@sofar}
+% \changes{v1.4}{2022/04/17}{No longer copying boxes for one column
+% version} 
 %   We redefine |\page@sofar| to change the margins and allow for
 %  one-column output:
 %    \begin{macrocode}
 \def\adjmc@page@sofar{%
-%    \end{macrocode}
-%  If we have one column, the standard mechanisms leave empty space
-%  instead of the first column.  Ok, we use the fact that there is a
-%  copy of the first column in |\mult@firstbox|\dots
-%    \begin{macrocode}
-  \ifnum\col@number=\@ne
-  \setbox\mult@rightbox\box\mult@firstbox
-  \fi
 %    \end{macrocode}
 % We redefine |\multicol@leftmargin| to introduce the shift of the
 % box.  We save the old code in |\adjmc@saved@leftmargin|
@@ -534,7 +528,18 @@
 %    \end{macrocode}
 %   
 % \end{macro}
+%
+% \begin{macro}{\adjmc@process@ne@column}
+% \changes{v1.4}{2022/04/17}{Added macro} 
+% If we have one column, we do not need to balance it.   Mostly stolen
+% from |multicol.sty|
+%    \begin{macrocode}
+\def\adjmc@process@ne@column{%
+  \setbox\mult@firstbox\copy\mult@box}
+%    \end{macrocode}
 % 
+%
+% \end{macro}
 %
 %\subsection{Not Balancing Columns}
 %\label{sec:not_balance}
@@ -542,7 +547,9 @@
 % The starred versions do not balance the columns.
 %
 % \begin{macro}{\adjmulticols*}
-%   This follows the code of the \textsf{multicols} package:
+% \changes{v1.4}{2022/04/17}{Special code for one column version} 
+%   This follows the code of the \textsf{multicols} package with the
+%   special check for one column:
 %    \begin{macrocode}
 \newenvironment{adjmulticols*}{%
    \ifinner
@@ -551,8 +558,11 @@
         not make sense.\MessageBreak
         Going to balance anyway}%
    \else
-     \let\balance@columns@out
-         \multi@column@out
+     \ifnum\col@number=\@ne\relax
+        \let\balance@columns\adjmc@process@ne@column
+     \else
+        \let\balance@columns@out\multi@column@out
+     \fi
    \fi
    \adjmulticols}{%
    \vfill
