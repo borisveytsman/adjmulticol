@@ -1,9 +1,7 @@
-       Adjusting Margins for Multicolumn and Unicolumn Output
+Adjusting Margins for Multicolumn and Unicolumn Output
 
-This package provides an extension of the multicol package with the
-option to change the margins for multicolumn and unicolumn layout.
-The package understands the difference between the even and odd
-margins for two side printing.
+An extension to the multicol package for changing margins for
+multicolumn layout and one column output
 
 
 Changes:
@@ -16,3 +14,5 @@ Changes:
    v1.3  Big fix: disappearing material in one column output
 
    v1.4  New version of bug fix with one column
+
+   v1.5  Added space after one column material

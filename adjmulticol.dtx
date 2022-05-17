@@ -308,7 +308,7 @@
 %</gobble>
 %<style>\ProvidesPackage{adjmulticol}
 %<*style>
-[2022/04/17 v1.4 Adjusted margins for multicolumn layout]
+[2022/05/15 v1.5 Adjusted margins for multicolumn layout]
 %    \end{macrocode}
 %
 %
@@ -530,12 +530,13 @@
 % \end{macro}
 %
 % \begin{macro}{\adjmc@process@ne@column}
-% \changes{v1.4}{2022/04/17}{Added macro} 
+% \changes{v1.4}{2022/04/17}{Added macro}
+% \changes{v1.5}{2022/05/15}{Added \cs{vfill}} 
 % If we have one column, we do not need to balance it.   Mostly stolen
 % from |multicol.sty|
 %    \begin{macrocode}
 \def\adjmc@process@ne@column{%
-  \setbox\mult@firstbox\copy\mult@box}
+  \setbox\mult@firstbox\vbox{\unvbox\mult@box\vfill}}
 %    \end{macrocode}
 % 
 %
